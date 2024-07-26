@@ -68,4 +68,9 @@ public partial class SampleContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+    public Brand? GetBrandByName(string name)
+    {
+        return this.Brands.Where(x=>x.Name == name).FirstOrDefault();
+    }
 }

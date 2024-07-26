@@ -1,0 +1,26 @@
+<h2>add hero</h2>
+
+<form [formGroup]="heroForm" (ngSubmit)="OnSubmitHero()">
+
+    <p>
+        <label for="Name">Name:</label>
+    </p>
+    <p>
+        <input id="name" type="text" formControlName="name" />
+    <p>
+        <label for="Alias">Alias:</label>
+    </p>
+    <p>
+        <input id="alias" type="text" formControlName="alias" />
+    </p>
+    <p>
+        <label for="BrandName">Brand Name:</label>
+    </p>
+    <p>
+        <select id="brandName" formControlName="brandName"> 
+            <option *ngFor="let brand of brands" [value]="brand">{{brand}}</option>
+        </select>
+        <!-- <input id="brandName" type="text" formControlName="brandName" /> -->
+    </p>
+    <button type="submit" [disabled]="!heroForm.valid" >Submit</button>
+</form>

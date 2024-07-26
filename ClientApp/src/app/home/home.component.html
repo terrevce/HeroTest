@@ -6,7 +6,7 @@
 
 <table class="table table-hover">
   <thead>
-    <tr>
+    <tr> 
       <th>Id</th>
       <th>Name</th>
       <th>Alias</th>
@@ -15,13 +15,13 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td>1</td>
-      <td>Superman</td>
-      <td>Clark Kent</td>
-      <td>DC</td>
+    <tr *ngFor="let hero of heroes"> 
+      <td>{{hero.Id}}</td>
+      <td>{{hero.Name}}</td>
+      <td>{{hero.Alias}}</td>
+      <td>{{hero.BrandName}}</td>
       <td>
-        <button type="button" class="btn btn-danger">Delete</button>
+        <button type="button" (click)="disableHero(hero.Id)" class="btn btn-danger">Delete</button>
       </td>
     </tr>
   </tbody>
