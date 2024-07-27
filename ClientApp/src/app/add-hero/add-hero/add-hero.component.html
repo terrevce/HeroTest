@@ -7,11 +7,19 @@
     </p>
     <p>
         <input id="name" type="text" formControlName="name" />
+        
+    </p>
+    <p *ngIf="heroForm.get('name')?.invalid && heroForm.get('name')?.dirty">
+        invalid input
+    </p>
     <p>
         <label for="Alias">Alias:</label>
     </p>
     <p>
         <input id="alias" type="text" formControlName="alias" />
+    </p>
+    <p *ngIf="heroForm.get('alias')?.invalid && heroForm.get('alias')?.dirty">
+        invalid input
     </p>
     <p>
         <label for="BrandName">Brand Name:</label>
@@ -23,4 +31,5 @@
         <!-- <input id="brandName" type="text" formControlName="brandName" /> -->
     </p>
     <button type="submit" [disabled]="!heroForm.valid" >Submit</button>
+   
 </form>

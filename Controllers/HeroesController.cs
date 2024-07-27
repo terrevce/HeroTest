@@ -18,47 +18,77 @@ public class HeroesController : ControllerBase
         _sampleContext = sampleContext;
     }
 
+    /// <summary>
+    /// get active heroes
+    /// </summary>
+    /// <returns>IEnumerable<HeroesResponse></returns>
     [HttpGet]
     public IEnumerable<HeroesResponse> Get()
     {
-        return _sampleContext.Heroes.Where(x=>x.IsActive==true).Select(i => new HeroesResponse
+        return _sampleContext.Heroes.Where(x => x.IsActive == true).Select(i => new HeroesResponse
         {
             Alias = i.Alias,
             BrandName = i.Brand.Name,
             Id = i.Id,
             Name = i.Name
         }).ToList();
-
     }
+
+    /// <summary>
+    /// add new hero
+    /// </summary>
+    /// <param name="heroRequest"></param>
+    /// <returns>IActionResult</returns>
     [HttpPost]
     public IActionResult Post(HeroRequest heroRequest)
     {
-        Brand? brand = _sampleContext.GetBrandByName(heroRequest.BrandName);
-
-        if (brand == null)
+        try
         {
-            return BadRequest("Brand Not Found");
+            //validate
+            Brand? brand = _sampleContext.GetBrandByName(heroRequest.BrandName);
+
+            if (brand == null)
+            {
+                return BadRequest("Brand Not Found");
+            }
+
+            _sampleContext.Heroes.Add(new Hero { Alias = heroRequest.Alias, Name = heroRequest.Name, IsActive = true, BrandId = brand.Id });
+            _sampleContext.SaveChanges();
+
+            return Ok();
         }
-
-        _sampleContext.Heroes.Add(new Hero { Alias = heroRequest.Alias, Name = heroRequest.Name, IsActive = true, BrandId = brand.Id });
-        _sampleContext.SaveChanges();
-
-        return Ok();
-   
-
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.InnerException?.Message);
+            return Problem(detail: ex.Message, statusCode: 500);
+        }
     }
+
+    /// <summary>
+    /// set hero to inactive
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>IActionResult</returns>
     [HttpDelete]
     public IActionResult Delete(int id)
     {
-        var hero = _sampleContext.Heroes.Where(x => x.Id == id && x.IsActive == true).FirstOrDefault();
+        try
+        {
+            var hero = _sampleContext.Heroes.Where(x => x.Id == id && x.IsActive == true).FirstOrDefault();
 
-        if (hero == null)
-            return NotFound("valid hero with that id not found");
+            if (hero == null)
+                return NotFound("valid hero with that id not found");
 
-        hero.IsActive = false;
-        _sampleContext.Update(hero);
-        _sampleContext.SaveChanges();
-        return Ok();
+            hero.IsActive = false;
+            _sampleContext.Update(hero);
+            _sampleContext.SaveChanges();
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.InnerException?.Message);
+            return Problem(detail: ex.Message, statusCode: 500);
+        }
 
     }
 }

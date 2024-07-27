@@ -69,8 +69,13 @@ public partial class SampleContext : DbContext
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 
-    public Brand? GetBrandByName(string name)
+    internal Brand? GetBrandByName(string name)
     {
-        return this.Brands.Where(x=>x.Name == name).FirstOrDefault();
+        return this.Brands.Where(x=>x.Name.ToLower() == name.Trim().ToLower() && x.IsActive==true).FirstOrDefault();
+    }
+
+    internal Brand? GetBrandById(int id)
+    {
+        return this.Brands.Where(x => x.Id == id && x.IsActive == true).FirstOrDefault();
     }
 }

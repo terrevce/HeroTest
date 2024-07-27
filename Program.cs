@@ -19,13 +19,22 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNamingPolicy = null;
     });
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+
 var app = builder.Build();
 
 app.UseCors(options =>
   options.WithOrigins("*")
     .AllowAnyMethod()
     .AllowAnyHeader());
-
+//swag
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
