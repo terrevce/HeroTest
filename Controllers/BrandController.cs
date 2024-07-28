@@ -1,6 +1,6 @@
-﻿using HeroTest.Models;
-using HeroTest.Models.RequestModels;
+﻿using HeroTest.Models.RequestModels;
 using HeroTest.Models.ResponseModels;
+using HeroTest.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HeroTest.Controllers;
@@ -10,26 +10,22 @@ public class BrandController : ControllerBase
 {
 
     private readonly ILogger<BrandController> _logger;
-    private readonly SampleContext _sampleContext;
+    private readonly IBrandService _brandService;
 
-    public BrandController(ILogger<BrandController> logger, SampleContext sampleContext)
+    public BrandController(ILogger<BrandController> logger, IBrandService brandService)
     {
         _logger = logger;
-        _sampleContext = sampleContext;
+        _brandService = brandService;
     }
 
     /// <summary>
     /// get Active brands
     /// </summary>
     /// <returns>IEnumerable<BrandResponse> </returns>
-    [HttpGet]  
+    [HttpGet]
     public IEnumerable<BrandResponse> Get()
     {
-        return _sampleContext.Brands.Where(x => x.IsActive == true).Select(i => new BrandResponse
-        {
-            Name = i.Name,
-            Id = i.Id
-        }).ToList();
+        return _brandService.GetBrands();
     }
 
     /// <summary>
@@ -40,31 +36,21 @@ public class BrandController : ControllerBase
     [HttpPost]
     public IActionResult Post(BrandRequest brandRequest)
     {
-        try
-        {
-            // Validate request
-            if (brandRequest == null || string.IsNullOrWhiteSpace(brandRequest.Name))
-            {
-                return BadRequest("Invalid Brand Name");
-            }
 
-            //check existing
-            var brand = _sampleContext.GetBrandByName(brandRequest.Name);
-            if (brand != null)
-            {
-                return Conflict(brand);
-            }
-
-            _sampleContext.Brands.Add(new Brand { Name = brandRequest.Name, IsActive = true });
-            _sampleContext.SaveChanges();
-            return Ok();
-        }
-        catch (Exception ex)
+        // Validate request
+        if (brandRequest == null || string.IsNullOrWhiteSpace(brandRequest.Name))
         {
-            _logger.LogError(ex.InnerException?.Message);
-            return Problem(detail: ex.Message, statusCode:500);
-            
+            return BadRequest("Invalid Brand Name");
         }
+
+        bool created = _brandService.CreateBrand(brandRequest, out string message);
+
+        if (!created)
+        {
+            return BadRequest(message);
+        }
+
+        return Ok();
 
     }
 
@@ -76,28 +62,15 @@ public class BrandController : ControllerBase
     [HttpDelete]
     public IActionResult Delete(int Id)
     {
-        try
-        {
-            //check existing
-            var brand = _sampleContext.GetBrandById(Id);
-            if (brand == null)
-            {
-                return NotFound("Active Brand Not Found");
-            }
+        bool deleted = _brandService.DeleteBrand(Id, out string message);
 
-            //set inactive
-            brand.IsActive = false;
-            _sampleContext.Update(brand);
-            _sampleContext.SaveChanges();
-            return Ok();
-        }
-        catch (Exception ex)
+        if (!deleted)
         {
-            _logger.LogError(ex.InnerException?.Message);
-            return Problem(detail: ex.Message, statusCode: 500);
-
+            return BadRequest(message);
         }
 
+        return Ok();
     }
+
 }
 
