@@ -13,7 +13,7 @@ export class AddHeroComponent {
 
   heroForm = new FormGroup({
     name: new FormControl("", [Validators.required,Validators.maxLength(100)]),
-    alias: new FormControl("", Validators.maxLength(50)),
+    alias: new FormControl("", [Validators.maxLength(50), Validators.required]),
     brandName: new FormControl("", [Validators.required,Validators.maxLength(100)]),
 
   });

@@ -3,7 +3,7 @@
 <form [formGroup]="heroForm" (ngSubmit)="OnSubmitHero()">
 
     <p>
-        <label for="Name">Name:</label>
+        <label for="Name">Name<span class="required">*</span>:</label>
     </p>
     <p>
         <input id="name" type="text" formControlName="name" />
@@ -13,7 +13,7 @@
         invalid input
     </p>
     <p>
-        <label for="Alias">Alias:</label>
+        <label for="Alias">Alias<span class="required">*</span>:</label>
     </p>
     <p>
         <input id="alias" type="text" formControlName="alias" />
@@ -22,7 +22,7 @@
         invalid input
     </p>
     <p>
-        <label for="BrandName">Brand Name:</label>
+        <label for="BrandName">Brand Name<span class="required">*</span>:</label>
     </p>
     <p>
         <select id="brandName" formControlName="brandName"> 
