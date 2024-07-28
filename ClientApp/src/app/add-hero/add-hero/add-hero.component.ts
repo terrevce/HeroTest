@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Hero } from 'src/app/models/hero.model';
 import { Router } from '@angular/router';
 import { HeroService } from 'src/app/services/hero.service';
+import { Brand } from 'src/app/models/brand.model';
 
 @Component({
   selector: 'app-add-hero',
@@ -19,9 +20,22 @@ export class AddHeroComponent {
   });
   hero: Hero = { Id: 0, Name: '', Alias: '', BrandName: '', };
   //TODO get brands from DB
-  brands: string[] = ['DC', 'Marvel'];
+  brands: Brand[] = [];
 
   constructor(private router: Router, private heroSvc: HeroService) { }
+
+  
+  ngOnInit() {
+    this.heroSvc.GetBrands().subscribe({
+      next: (data) => {
+        this.brands = data;
+        console.log(this.brands);
+      },
+      error: (error) => {
+        console.error('get brands failed: ', error);
+      }
+    })
+  }
 
   OnSubmitHero() {
     if (this.heroForm.valid) {

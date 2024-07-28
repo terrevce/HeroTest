@@ -5,31 +5,31 @@
     <p>
         <label for="Name">Name<span class="required">*</span>:</label>
     </p>
-    <p>
-        <input id="name" type="text" formControlName="name" />
-        
-    </p>
-    <p *ngIf="heroForm.get('name')?.invalid && heroForm.get('name')?.dirty">
-        invalid input
-    </p>
+    <div class="mb-3">
+        <input class="form-control" id="name" type="text" formControlName="name" />
+        <div class="feedback" *ngIf="heroForm.get('name')?.invalid && heroForm.get('name')?.dirty">
+            invalid name
+        </div>
+    </div>
     <p>
         <label for="Alias">Alias<span class="required">*</span>:</label>
     </p>
-    <p>
-        <input id="alias" type="text" formControlName="alias" />
-    </p>
-    <p *ngIf="heroForm.get('alias')?.invalid && heroForm.get('alias')?.dirty">
-        invalid input
-    </p>
+    <div class="mb-3">
+        <input class="form-control" id="alias" type="text" formControlName="alias" />
+        <div class="feedback" *ngIf="heroForm.get('alias')?.invalid && heroForm.get('alias')?.dirty">
+            invalid alias
+        </div>
+    </div>
+
     <p>
         <label for="BrandName">Brand Name<span class="required">*</span>:</label>
     </p>
     <p>
-        <select id="brandName" formControlName="brandName"> 
-            <option *ngFor="let brand of brands" [value]="brand">{{brand}}</option>
+        <select class="form-select" id="brandName" formControlName="brandName">
+            <option *ngFor="let brand of brands" [value]="brand.Name">{{brand.Name}}</option>
         </select>
         <!-- <input id="brandName" type="text" formControlName="brandName" /> -->
     </p>
-    <button type="submit" [disabled]="!heroForm.valid" >Submit</button>
-   
+    <button type="submit" [disabled]="!heroForm.valid" class="btn btn-primary">Submit</button>
+
 </form>

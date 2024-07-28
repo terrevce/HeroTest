@@ -42,6 +42,11 @@ public class HeroesController : ControllerBase
     [HttpPost]
     public IActionResult Post(HeroRequest heroRequest)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         try
         {
             //validate
