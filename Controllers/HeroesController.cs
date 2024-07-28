@@ -1,6 +1,7 @@
 ﻿using HeroTest.Models;
 using HeroTest.Models.RequestModels;
 using HeroTest.Models.ResponseModels;
+using HeroTest.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HeroTest.Controllers;
@@ -10,12 +11,12 @@ public class HeroesController : ControllerBase
 {
 
     private readonly ILogger<HeroesController> _logger;
-    private readonly SampleContext _sampleContext;
+    private readonly IHeroService _heroService;
 
-    public HeroesController(ILogger<HeroesController> logger, SampleContext sampleContext)
+    public HeroesController(ILogger<HeroesController> logger, IHeroService heroService)
     {
         _logger = logger;
-        _sampleContext = sampleContext;
+        _heroService = heroService;
     }
 
     /// <summary>
@@ -25,13 +26,7 @@ public class HeroesController : ControllerBase
     [HttpGet]
     public IEnumerable<HeroesResponse> Get()
     {
-        return _sampleContext.Heroes.Where(x => x.IsActive == true).Select(i => new HeroesResponse
-        {
-            Alias = i.Alias,
-            BrandName = i.Brand.Name,
-            Id = i.Id,
-            Name = i.Name
-        }).ToList();
+        return _heroService.GetHeroes();
     }
 
     /// <summary>
@@ -47,26 +42,15 @@ public class HeroesController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        try
+        bool result = _heroService.CreateHero(heroRequest, out string message);
+
+        if(result==false)
         {
-            //validate
-            Brand? brand = _sampleContext.GetBrandByName(heroRequest.BrandName);
-
-            if (brand == null)
-            {
-                return BadRequest("Brand Not Found");
-            }
-
-            _sampleContext.Heroes.Add(new Hero { Alias = heroRequest.Alias, Name = heroRequest.Name, IsActive = true, BrandId = brand.Id });
-            _sampleContext.SaveChanges();
-
-            return Ok();
+            return BadRequest(message);
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.InnerException?.Message);
-            return Problem(detail: ex.Message, statusCode: 500);
-        }
+      
+        return Ok();
+
     }
 
     /// <summary>
@@ -77,24 +61,15 @@ public class HeroesController : ControllerBase
     [HttpDelete]
     public IActionResult Delete(int id)
     {
-        try
-        {
-            var hero = _sampleContext.Heroes.Where(x => x.Id == id && x.IsActive == true).FirstOrDefault();
 
-            if (hero == null)
-                return NotFound("valid hero with that id not found");
+        bool result = _heroService.DeleteHero(id,out string message);
 
-            hero.IsActive = false;
-            _sampleContext.Update(hero);
-            _sampleContext.SaveChanges();
-            return Ok();
-        }
-        catch (Exception ex)
+        if(result == false)
         {
-            _logger.LogError(ex.InnerException?.Message);
-            return Problem(detail: ex.Message, statusCode: 500);
+            return BadRequest(message);
         }
 
+        return Ok();
     }
 }
 

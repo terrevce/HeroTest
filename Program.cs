@@ -1,9 +1,11 @@
 using HeroTest.Models;
+using HeroTest.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<IHeroService, HeroService>();
 
 builder.Services.AddControllersWithViews();
 
