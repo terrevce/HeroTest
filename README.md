@@ -1,4 +1,4 @@
-Dev Swagger: https://localhost:<port>/swagger/index.html
+Dev Swagger: https://localhost:7014/swagger/index.html
 
 Live Demo: TBD
 

@@ -230,3 +230,6 @@ _Pvt_Extensions
 # FAKE - F# Make
 .fake/
 /ClientApp/.angular/cache/15.1.6
+/Properties/ServiceDependencies/herotest - Web Deploy
+/Properties
+/HeroTest/ClientApp/.angular/cache/15.1.6
